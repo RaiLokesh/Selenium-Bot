@@ -73,7 +73,7 @@ d = {"task": mail}
 
 #------Mailing Scenes start here!!--------
 
-if mail:
+if mail or True:
     print("pikachu")
     recievers = []
     sender = 'seleniumbot@hotmail.com'
