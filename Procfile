@@ -1,0 +1,1 @@
+worker: python first_crawl.py
