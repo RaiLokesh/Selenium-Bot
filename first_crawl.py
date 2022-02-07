@@ -67,13 +67,13 @@ for i in assignments:
     j+=1
 
 d = {"task": mail}
-
+if mail=='': mail="abhi checking chalu hai"
 #r = requests.post('https://hook.integromat.com/pxfywsoha4hey2h4hgyakhgicn7erj3h', data=json.dumps(d), headers={'Content-Type':'application/json'})
 
 
 #------Mailing Scenes start here!!--------
 
-if mail or True:
+if mail:
     print("pikachu")
     recievers = []
     sender = 'seleniumbot@hotmail.com'
