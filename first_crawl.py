@@ -95,7 +95,8 @@ if mail:
         body = 'Hello,\nThe assignments that require your attention today are listed below\n\n'+mail+'\n\nRegards.'
         msg.attach(MIMEText(body, 'plain'))
         text = msg.as_string()
-        sm= smtplib.SMTP('smtp-mail.outlook.com', 587)
+        smtp_server = os.environ.get("SMTP_SERVER")
+        sm= smtplib.SMTP(smtp_server, 587)
         sm.starttls()
         sm.login(maill, passs)
         sm.sendmail(maill, i, text)
