@@ -5,6 +5,7 @@ import requests
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import json 
 
 options = webdriver.ChromeOptions()
 options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
@@ -66,13 +67,15 @@ for i in assignments:
     mail += (i[-1]+' : '+i[0]+' '+i[1]+' '+i[2]+' : '+i[-2]+"\n\n")
     j+=1
 
-d = {"task": mail}
+
 if mail=='': mail="abhi checking chalu hai"
-#r = requests.post('https://hook.integromat.com/pxfywsoha4hey2h4hgyakhgicn7erj3h', data=json.dumps(d), headers={'Content-Type':'application/json'})
+d = {"task": mail}
+if mail:
+    r = requests.post('https://hook.integromat.com/pxfywsoha4hey2h4hgyakhgicn7erj3h', data=json.dumps(d), headers={'Content-Type':'application/json'})
 
 
 #------Mailing Scenes start here!!--------
-
+'''
 if mail:
     print("pikachu")
     recievers = []
@@ -100,3 +103,4 @@ if mail:
         sm.login(maill, passs)
         sm.sendmail(maill, i, text)
         sm.quit()
+'''
