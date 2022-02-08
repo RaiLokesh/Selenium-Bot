@@ -1,1 +1,1 @@
-worker: python first_crawl.py
+web: gunicorn wsgi:app
