@@ -76,7 +76,6 @@ if mail=='': mail="abhi checking chalu hai"
 if mail:
     print("pikachu")
     recievers = []
-    sender = 'seleniumbot@hotmail.com'
     sheet_json = os.environ.get("JSON")
     spreadsheet_data = requests.get(sheet_json)
     spreadsheet_data = spreadsheet_data.json()
@@ -95,8 +94,8 @@ if mail:
         body = 'Hello,\nThe assignments that require your attention today are listed below\n\n'+mail+'\n\nRegards.'
         msg.attach(MIMEText(body, 'plain'))
         text = msg.as_string()
-        smtp_server = os.environ.get("SMTP_SERVER")
-        sm= smtplib.SMTP(smtp_server, 587)
+        #smtp_server = os.environ.get("SMTP_SERVER")
+        sm= smtplib.SMTP("smtp.gmail.com", 587)
         sm.starttls()
         sm.login(maill, passs)
         sm.sendmail(maill, i, text)
