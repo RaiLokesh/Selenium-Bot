@@ -1,1 +1,1 @@
-worker: python first_crawl.py
+clock: python first_crawl.py

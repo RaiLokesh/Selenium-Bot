@@ -5,75 +5,83 @@ import requests
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-import json 
+import json
+from apscheduler.schedulers.blocking import BlockingScheduler
 
-options = webdriver.ChromeOptions()
-options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-options.add_argument("--headless")
-options.add_argument("--disable-dev-shm-usage")
-options.add_argument("--no-sandbox")
-options.add_experimental_option('excludeSwitches', ['enable-logging'])
-browser = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=options) #'C:\chromedriver\chromedriver.exe'
+sched = BlockingScheduler()
 
-url = 'https://lmsone.iiitkottayam.ac.in/login/'
-browser.get(url)
-m_name = os.environ.get("MNAME")
-search = browser.find_element_by_name('username')
-m_pass = os.environ.get("MPASS")
-search.send_keys(m_name)
-search = browser.find_element_by_name('password')
-search.send_keys(m_pass)
+@sched.scheduled_job('cron', day_of_week='mon-sun', hour=6)
 
-submit = browser.find_element_by_id('loginbtn')
-#sleep(2)
-submit.click()
-#sleep(5)
-
-url = 'https://lmsone.iiitkottayam.ac.in/calendar/view.php'
-browser.get(url)
-
-tasks = browser.find_elements_by_xpath('//h3[@class="name d-inline-block"]')
-t = []
-for i in tasks:
-    t.append(i.text)
-
-def check(x):
-    if x[0] not in ['Today,', 'Tomorrow,']: return True
-    if x[0]=='Tomorrow,' and x[-1]=='PM': return True
-    if x[0]=='Today': return False
-    y = x[-2].split(':')
-    if y[0] == '12': y[0] = '00'
-    mins = int(y[0])*60 + int(y[1])
-    if mins > 360: return True
-    return False
-
-pending_assignments = browser.find_elements_by_xpath('//div[@class="description card-body"]//div[@class="row"]//div[@class="col-11"]')
-pending_assignments_name = browser.find_elements_by_xpath('//div[@class="description card-body"]//div[@class="row mt-1"]//div[@class="col-11"]//a')
-assignments = []
-for i in range(len(pending_assignments)):
-    y = str(pending_assignments[i].text)
-    y1 = str(pending_assignments_name[i].text)
-    z = y.split()
-    if check(z): break
-    z.append(t[i])
-    z.append(y1)
-    assignments.append(z)
+def scheduled_job():
 
 
-d = dict()
-j = 1
-mail = ''
-for i in assignments:
-    mail += (i[-1]+' : '+i[0]+' '+i[1]+' '+i[2]+' : '+i[-2]+"\n\n")
-    j+=1
+    options = webdriver.ChromeOptions()
+    options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+    options.add_argument("--headless")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--no-sandbox")
+    options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    browser = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=options) #'C:\chromedriver\chromedriver.exe'
+
+    url = 'https://lmsone.iiitkottayam.ac.in/login/'
+    browser.get(url)
+    m_name = os.environ.get("MNAME")
+    search = browser.find_element_by_name('username')
+    m_pass = os.environ.get("MPASS")
+    search.send_keys(m_name)
+    search = browser.find_element_by_name('password')
+    search.send_keys(m_pass)
+
+    submit = browser.find_element_by_id('loginbtn')
+    #sleep(2)
+    submit.click()
+    #sleep(5)
+
+    url = 'https://lmsone.iiitkottayam.ac.in/calendar/view.php'
+    browser.get(url)
+
+    tasks = browser.find_elements_by_xpath('//h3[@class="name d-inline-block"]')
+    t = []
+    for i in tasks:
+        t.append(i.text)
+
+    def check(x):
+        if x[0] not in ['Today,', 'Tomorrow,']: return True
+        if x[0]=='Tomorrow,' and x[-1]=='PM': return True
+        if x[0]=='Today': return False
+        y = x[-2].split(':')
+        if y[0] == '12': y[0] = '00'
+        mins = int(y[0])*60 + int(y[1])
+        if mins > 360: return True
+        return False
+
+    pending_assignments = browser.find_elements_by_xpath('//div[@class="description card-body"]//div[@class="row"]//div[@class="col-11"]')
+    pending_assignments_name = browser.find_elements_by_xpath('//div[@class="description card-body"]//div[@class="row mt-1"]//div[@class="col-11"]//a')
+    assignments = []
+    for i in range(len(pending_assignments)):
+        y = str(pending_assignments[i].text)
+        y1 = str(pending_assignments_name[i].text)
+        z = y.split()
+        if check(z): break
+        z.append(t[i])
+        z.append(y1)
+        assignments.append(z)
 
 
-if mail=='': mail="abhi checking chalu hai"
-d = {"task": mail}
-if mail:
-    r = requests.post('https://hook.integromat.com/pxfywsoha4hey2h4hgyakhgicn7erj3h', data=json.dumps(d), headers={'Content-Type':'application/json'})
+    d = dict()
+    j = 1
+    mail = ''
+    for i in assignments:
+        mail += (i[-1]+' : '+i[0]+' '+i[1]+' '+i[2]+' : '+i[-2]+"\n\n")
+        j+=1
 
 
+    if mail=='': mail="abhi checking chalu hai"
+    d = {"task": mail}
+    if mail:
+        r = requests.post('https://hook.integromat.com/pxfywsoha4hey2h4hgyakhgicn7erj3h', data=json.dumps(d), headers={'Content-Type':'application/json'})
+
+sched.start()
 #------Mailing Scenes start here!!--------
 '''
 if mail:
