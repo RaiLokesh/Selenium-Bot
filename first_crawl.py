@@ -9,7 +9,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 
 sched = BlockingScheduler()
 
-@sched.scheduled_job('cron', day_of_week='mon-sun', hour=2, minute=25)
+@sched.scheduled_job('cron', day_of_week='mon-sun', hour=2, minute=40)
 
 def scheduled_job():
 
@@ -78,7 +78,7 @@ def scheduled_job():
 #------Mailing Part start here!!--------
     
     if mail:
-        sleep(120)
+        sleep(5)
         recievers = []
         sheet_json = os.environ.get("JSON")
         spreadsheet_data = requests.get(sheet_json)
@@ -88,22 +88,22 @@ def scheduled_job():
             if i['Select Yes/No.'] == 'Yes':
                 recievers.append(i['Email Address'])
 
-        for i in recievers:
-            msg = MIMEMultipart()
-            maill = os.environ.get("EMAIL")
-            passs = os.environ.get("PASSWORD")
-            msg['From'] = "Selenium Bot"
-            msg['To'] = i
-            msg['Subject'] ="Assignemnts To Be Submitted Today!"
-            body = 'Hello,\nThe assignments that require your attention today are listed below\n\n'+mail+'\n\nRegards.'
-            msg.attach(MIMEText(body, 'plain'))
-            text = msg.as_string()
-            smtp_server = os.environ.get("SMTP_SERVER")
-            sm= smtplib.SMTP(smtp_server, 587)
-            sm.starttls()
-            sm.login(maill, passs)
-            sm.sendmail(maill, i, text)
-            sm.quit()
+        
+        msg = MIMEMultipart()
+        maill = os.environ.get("EMAIL")
+        passs = os.environ.get("PASSWORD")
+        msg['From'] = "Selenium Bot"
+        msg['To'] = "Comrades"
+        msg['Subject'] ="Assignemnts To Be Submitted Today!"
+        body = 'Hello,\nThe assignments that require your attention today are listed below\n\n'+mail+'\n\nRegards.'
+        msg.attach(MIMEText(body, 'plain'))
+        text = msg.as_string()
+        smtp_server = os.environ.get("SMTP_SERVER")
+        sm= smtplib.SMTP(smtp_server, 587)
+        sm.starttls()
+        sm.login(maill, passs)
+        sm.sendmail(maill, recievers, text)
+        sm.quit()
     
 
 sched.start()
