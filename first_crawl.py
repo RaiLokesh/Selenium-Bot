@@ -9,7 +9,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 
 sched = BlockingScheduler()
 
-@sched.scheduled_job('cron', day_of_week='mon-sun', hour=2, minute=50)
+@sched.scheduled_job('cron', day_of_week='mon-sun', hour=2, minute=55)
 
 def scheduled_job():
 
@@ -93,7 +93,7 @@ def scheduled_job():
         maill = os.environ.get("EMAIL")
         passs = os.environ.get("PASSWORD")
         msg['From'] = "Selenium Bot"
-        msg['To'] = recievers
+        msg['To'] = ','.join(recievers)
         msg['Subject'] ="Assignemnts To Be Submitted Today!"
         body = 'Hello,\nThe assignments that require your attention today are listed below\n\n'+mail+'\n\nRegards.'
         msg.attach(MIMEText(body, 'plain'))
