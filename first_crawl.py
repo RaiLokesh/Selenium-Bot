@@ -9,7 +9,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 
 sched = BlockingScheduler()
 
-@sched.scheduled_job('cron', day_of_week='mon-sun', hour=2, minute=40)
+@sched.scheduled_job('cron', day_of_week='mon-sun', hour=2, minute=42)
 
 def scheduled_job():
 
