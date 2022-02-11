@@ -5,12 +5,11 @@ import requests
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-import json
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 sched = BlockingScheduler()
 
-@sched.scheduled_job('cron', day_of_week='mon-sun', hour=1)
+@sched.scheduled_job('cron', day_of_week='mon-sun', hour=2, minute=25)
 
 def scheduled_job():
 
@@ -22,6 +21,8 @@ def scheduled_job():
     options.add_argument("--no-sandbox")
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
     browser = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=options)
+
+#-----Crawling part starts here------------
 
     url = 'https://lmsone.iiitkottayam.ac.in/login/'
     browser.get(url)
@@ -67,8 +68,6 @@ def scheduled_job():
         z.append(y1)
         assignments.append(z)
 
-
-    d = dict()
     j = 1
     mail = ''
     for i in assignments:
@@ -76,17 +75,10 @@ def scheduled_job():
         j+=1
 
 
-    if mail=='': mail="abhi checking chalu hai"
-    d = {"task": mail}
-    '''
-    if mail:
-        r = requests.post('https://hook.integromat.com/pxfywsoha4hey2h4hgyakhgicn7erj3h', data=json.dumps(d), headers={'Content-Type':'application/json'})
-    '''
-
-#------Mailing Scenes start here!!--------
+#------Mailing Part start here!!--------
     
     if mail:
-        print("pikachu")
+        sleep(120)
         recievers = []
         sheet_json = os.environ.get("JSON")
         spreadsheet_data = requests.get(sheet_json)
@@ -100,7 +92,7 @@ def scheduled_job():
             msg = MIMEMultipart()
             maill = os.environ.get("EMAIL")
             passs = os.environ.get("PASSWORD")
-            msg['From'] = maill
+            msg['From'] = "Selenium Bot"
             msg['To'] = i
             msg['Subject'] ="Assignemnts To Be Submitted Today!"
             body = 'Hello,\nThe assignments that require your attention today are listed below\n\n'+mail+'\n\nRegards.'
