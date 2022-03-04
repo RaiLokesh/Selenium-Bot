@@ -49,7 +49,7 @@ def scheduled_job():
     def check(x):
         if x[0] not in ['Today,', 'Tomorrow,']: return True
         if x[0]=='Tomorrow,' and x[-1]=='PM': return True
-        if x[0]=='Today': return False
+        if x[0]=='Today,': return False
         y = x[-2].split(':')
         if y[0] == '12': y[0] = '00'
         mins = int(y[0])*60 + int(y[1])
